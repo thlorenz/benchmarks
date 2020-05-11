@@ -3,11 +3,13 @@ import { logger } from '../utils/logger'
 
 const log = logger('main')
 
-export function transpileJS(file: string, transfer: boolean) {
+type Opts = { transfer: boolean; wrapInObject: boolean }
+
+export function transpileJS(file: string, opts: Opts) {
   return new Promise((resolve, reject) => {
     log.debug('creating worker')
     const worker = new Worker(require.resolve('./worker.js'), {
-      workerData: { file, transfer },
+      workerData: { file, opts },
       stdout: false,
       stderr: false,
     })
@@ -18,5 +20,6 @@ export function transpileJS(file: string, transfer: boolean) {
       if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`))
     })
     log.debug('created worker')
+    log.debugTimeEnd
   })
 }
