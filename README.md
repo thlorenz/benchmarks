@@ -1,0 +1,3 @@
+# benchmarks
+
+Various fun benchmarks
