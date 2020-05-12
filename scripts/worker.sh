@@ -4,7 +4,8 @@ set -euo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 export DEBUG_COLORS=1
-export DEBUG='*:*:(info|debug)'
+export DEBUG='*:*:(info|debug|error)'
+export ITER=100000
 
 echo ""
 
