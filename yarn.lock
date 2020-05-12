@@ -45,3 +45,8 @@ uuid@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.0.0.tgz#bc6ccf91b5ff0ac07bbcdbf1c7c4e150db4dbb6c"
   integrity sha512-jOXGuXZAWdsTH7eZLtyXMqUb9EcWMGZNbL9YcGBJl4MH4nrxHmZJhEHvyLFrkxo+28uLb/NYRcStH48fnD0Vzw==
+
+word-list@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/word-list/-/word-list-3.1.0.tgz#c73180ce97399758b7aec9658a410508095f12bc"
+  integrity sha512-fm5Wqf3ema+SNTJ/WFMSL/mM4iVM+yBRyEI/KjrJTPPLsn72GbNBBK94vORD7nUc9DxE7r3H2MpuiVtiA9FzDg==

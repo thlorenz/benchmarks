@@ -18,6 +18,6 @@
     "types": ["node"],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "incremental": true
+    "incremental": false
   }
 }
