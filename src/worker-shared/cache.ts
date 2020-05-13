@@ -14,6 +14,7 @@ class Cache {
   constructor(
     private readonly _nproducers: number,
     private readonly _producerITER: number,
+    private readonly _producerShareBuffer: boolean,
     private readonly _cache: SharedArrayBuffer[] = []
   ) {}
 
@@ -24,7 +25,12 @@ class Cache {
   }
 
   private _spawnProducer(interval: number, id: number) {
-    const workerData: ProducerData = { interval, ITER: this._producerITER, id }
+    const workerData: ProducerData = {
+      interval,
+      ITER: this._producerITER,
+      id,
+      shareBuffer: this._producerShareBuffer,
+    }
     const workerOptions: WorkerOptions = { workerData }
 
     let msgCount = 0
@@ -62,5 +68,7 @@ class Cache {
   }
 }
 
-const cache = new Cache(4, 10)
+const shareBuffer = parseInt(process.env.SHARE_BUFFER || '') === 1
+log.info({ shareBuffer })
+const cache = new Cache(4, 10, shareBuffer)
 cache.init(100)

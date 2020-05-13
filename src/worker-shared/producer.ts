@@ -1,17 +1,15 @@
-const assert = require('assert')
+import { strict as assert } from 'assert'
 import fs from 'fs'
 import wordListPath from 'word-list'
+import { parentPort, workerData } from 'worker_threads'
 import { logger } from '../utils/logger'
 import { stringToArrayBuffer } from './buffer-util'
 import { ProducerData } from './types'
-const { parentPort, workerData } = require('worker_threads')
 
 const words = fs.readFileSync(wordListPath, 'utf8').split('\n')
 const nwords = words.length
 
-assert(parentPort != null, 'worker needs the parent port')
-
-const { id, interval, ITER }: ProducerData = workerData
+const { id, interval, ITER, shareBuffer }: ProducerData = workerData
 const log = logger(`producer.${id}`)
 let count = 0
 
@@ -24,17 +22,23 @@ function concatMultiWords(n: number = 1e5) {
   return ws.join(', ')
 }
 
-function produceWord() {
+function produceWord(): SharedArrayBuffer | ArrayBuffer {
   const idx = Math.floor(Math.random() * nwords)
-  return stringToArrayBuffer(words[idx], (size) => new SharedArrayBuffer(size))
+  return stringToArrayBuffer(words[idx], (size) =>
+    shareBuffer ? new SharedArrayBuffer(size) : new ArrayBuffer(size)
+  )
 }
 
-function produceWords(n?: number) {
+function produceWords(n?: number): SharedArrayBuffer | ArrayBuffer {
   const ws = concatMultiWords(n)
-  return stringToArrayBuffer(ws, (size) => new SharedArrayBuffer(size))
+  return stringToArrayBuffer(ws, (size) =>
+    shareBuffer ? new SharedArrayBuffer(size) : new ArrayBuffer(size)
+  )
 }
 
 function postWord() {
+  assert(parentPort != null, 'worker needs the parent port')
+
   const word = produceWords()
   const tk = log.debugTime()
   parentPort.postMessage(word)
