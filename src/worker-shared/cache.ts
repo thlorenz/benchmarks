@@ -64,7 +64,10 @@ class Cache {
   }
   dumpCache(lenOnly = true) {
     const msgStrings = this._cache.map(arrayBufferToString)
-    log.debug(msgStrings.length)
+    let bytes = 0
+    for (const s of msgStrings) bytes += Buffer.byteLength(s)
+
+    log.debug('Sent %d message total of %d bytes. ', msgStrings.length, bytes)
   }
 }
 

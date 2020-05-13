@@ -21,9 +21,10 @@ export function stringToArrayBuffer<T extends ArrayBuffer | SharedArrayBuffer>(
   return view.buffer as T
 }
 
-export function arrayBufferToString(buffer: ArrayBuffer | SharedArrayBuffer) {
-  return String.fromCharCode.apply(
-    null,
-    (new Uint16Array(buffer) as unknown) as number[]
-  )
+export function arrayBufferToString(
+  buffer: ArrayBuffer | SharedArrayBuffer
+): string {
+  const view = new Uint16Array(buffer)
+  const buf = Buffer.from(view)
+  return buf.toString('utf8')
 }
