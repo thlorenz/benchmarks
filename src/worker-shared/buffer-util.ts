@@ -11,7 +11,9 @@ export function stringToArrayBuffer<T extends ArrayBuffer | SharedArrayBuffer>(
   // const byteLen = Buffer.byteLength(s, 'utf8')
 
   const len = s.length
-  const buffer: ArrayBuffer | SharedArrayBuffer = createBuffer(len * 2)
+  const buffer: ArrayBuffer | SharedArrayBuffer = createBuffer(
+    len * Uint16Array.BYTES_PER_ELEMENT
+  )
   const view = new Uint16Array(buffer)
   for (let i = 0; i < len; i++) {
     view[i] = s.charCodeAt(i)

@@ -15,15 +15,30 @@ const { id, interval, ITER }: ProducerData = workerData
 const log = logger(`producer.${id}`)
 let count = 0
 
+function concatMultiWords(n: number = 1e5) {
+  const ws = []
+  for (let i = 0; i < n; i++) {
+    const idx = Math.floor(Math.random() * nwords)
+    ws.push(words[idx])
+  }
+  return ws.join(', ')
+}
+
 function produceWord() {
   const idx = Math.floor(Math.random() * nwords)
-  return stringToArrayBuffer(words[idx], (size) => new ArrayBuffer(size))
+  return stringToArrayBuffer(words[idx], (size) => new SharedArrayBuffer(size))
+}
+
+function produceWords(n?: number) {
+  const ws = concatMultiWords(n)
+  return stringToArrayBuffer(ws, (size) => new SharedArrayBuffer(size))
 }
 
 function postWord() {
-  const word = produceWord()
-  log.debug('sending %s', word.toString())
-  parentPort.postMessage(word, [word])
+  const word = produceWords()
+  const tk = log.debugTime()
+  parentPort.postMessage(word)
+  log.debugTimeEnd(tk, 'sending word of byteLen: %d', word.byteLength)
 }
 
 function tick() {
