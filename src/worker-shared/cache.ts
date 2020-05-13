@@ -3,7 +3,7 @@ import { Worker, WorkerOptions } from 'worker_threads'
 import { logger } from '../utils/logger'
 import { TimerKey } from '../utils/time-stamper'
 import { arrayBufferToString } from './buffer-util'
-import { ProducerData } from './types'
+import { AnyArrayBuffer, ProducerData, ProducerPayload } from './types'
 
 const log = logger('cache')
 
@@ -15,7 +15,7 @@ class Cache {
     private readonly _nproducers: number,
     private readonly _producerITER: number,
     private readonly _producerShareBuffer: boolean,
-    private readonly _cache: SharedArrayBuffer[] = []
+    private readonly _cache: Map<AnyArrayBuffer, AnyArrayBuffer> = new Map()
   ) {}
 
   init(producerInterval: number) {
@@ -41,8 +41,8 @@ class Cache {
     const producer = new Worker(require.resolve('./producer'), workerOptions)
 
     producer
-      .on('message', (msg: SharedArrayBuffer) =>
-        this.onProducerMessage(msg, id, ++msgCount)
+      .on('message', (payload: ProducerPayload) =>
+        this.onProducerMessage(payload, id, ++msgCount)
       )
       .on('error', log.error)
       .on('exit', (code: number) => {
@@ -51,9 +51,19 @@ class Cache {
       })
   }
 
-  onProducerMessage(msg: SharedArrayBuffer, id: number, msgCount: number) {
-    log.trace('message from producer %d -  %d %s "%s"', id, msg.byteLength, msg)
-    this._cache.push(msg)
+  onProducerMessage(
+    { key, value }: ProducerPayload,
+    id: number,
+    msgCount: number
+  ) {
+    log.trace(
+      'message from producer %d - %s: %d %s "%s"',
+      id,
+      key,
+      value.byteLength,
+      value
+    )
+    this._cache.set(key, value)
     if (msgCount === this._producerITER) {
       const producerInfo = this._spawnedProducers.get(id)
       assert(producerInfo != null, `unknown producer ${id}`)
@@ -63,11 +73,11 @@ class Cache {
     }
   }
   dumpCache(lenOnly = true) {
-    const msgStrings = this._cache.map(arrayBufferToString)
+    const msgStrings = Array.from(this._cache.values()).map(arrayBufferToString)
     let bytes = 0
     for (const s of msgStrings) bytes += Buffer.byteLength(s)
 
-    log.debug('Sent %d message total of %d bytes. ', msgStrings.length, bytes)
+    log.debug('Sent %d messages total of %d bytes. ', msgStrings.length, bytes)
   }
 }
 
