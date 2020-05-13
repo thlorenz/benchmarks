@@ -1,5 +1,6 @@
 import { Worker, WorkerOptions } from 'worker_threads'
 import { logger } from '../utils/logger'
+import { arrayBufferToString } from './buffer-util'
 import { ProducerData } from './types'
 
 const log = logger('cache')
@@ -23,7 +24,13 @@ class Cache {
     const tk = log.debugTime()
 
     function onProducerMessage(msg: ArrayBuffer) {
-      log.debug('message from producer %d %s', msg.byteLength, msg)
+      const msgString = arrayBufferToString(msg)
+      log.debug(
+        'message from producer %d %s "%s"',
+        msg.byteLength,
+        msg,
+        msgString
+      )
       if (++msgCount === ITER) {
         log.debugTimeEnd(tk, 'producer completed')
       }
@@ -42,4 +49,4 @@ class Cache {
 }
 
 const cache = new Cache()
-cache.init(100, 10, 2)
+cache.init(100, 2, 1)

@@ -2,6 +2,7 @@ const assert = require('assert')
 import fs from 'fs'
 import wordListPath from 'word-list'
 import { logger } from '../utils/logger'
+import { stringToArrayBuffer } from './buffer-util'
 import { ProducerData } from './types'
 const { parentPort, workerData } = require('worker_threads')
 
@@ -16,22 +17,13 @@ let count = 0
 
 function produceWord() {
   const idx = Math.floor(Math.random() * nwords)
-  return Buffer.from(words[idx], 'utf8')
-}
-
-function getArrayBuffer(buf: Buffer) {
-  // TODO: make this an ArrayBuffer
-  // https://nodejs.org/api/buffer.html#buffer_buf_buffer
-  // https://nodejs.org/api/buffer.html#buffer_buf_byteoffset
-  return new Int8Array(buf.buffer, buf.byteOffset, buf.length)
+  return stringToArrayBuffer(words[idx], (size) => new ArrayBuffer(size))
 }
 
 function postWord() {
   const word = produceWord()
   log.debug('sending %s', word.toString())
-  const arrayBuffer = getArrayBuffer(word)
-
-  parentPort.postMessage(arrayBuffer, [])
+  parentPort.postMessage(word, [word])
 }
 
 function tick() {
