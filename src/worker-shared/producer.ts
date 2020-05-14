@@ -4,19 +4,18 @@ import { logger } from '../utils/logger'
 import { ProducerData } from './types'
 import { produceWords } from './word-factory'
 
-const { id, interval, ITER, shareBuffer }: ProducerData = workerData
+const { id, interval, ITER, shareBuffer, nwords }: ProducerData = workerData
 const log = logger(`producer.${id}`)
 let count = 0
 
 function postWord() {
   assert(parentPort != null, 'worker needs the parent port')
 
-  const payload = produceWords(shareBuffer, 1e4)
+  const payload = produceWords(shareBuffer, nwords)
   const tk = log.debugTime()
   parentPort.postMessage(payload)
   log.debugTimeEnd(tk, 'sending word of byteLen: %d', payload.value.byteLength)
 }
-
 function tick() {
   postWord()
   if (++count >= ITER) process.exit(0)

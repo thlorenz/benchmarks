@@ -3,11 +3,13 @@ export type ProducerData = {
   interval: number
   ITER: number
   shareBuffer: boolean
+  nwords: number
 }
 export type ConsumerData = {
   id: number
   interval: number
-  ITER: number
+  shareBuffer: boolean
+  nwords: number
 }
 
 export type AnyArrayBuffer = ArrayBuffer | SharedArrayBuffer

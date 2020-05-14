@@ -1,14 +1,14 @@
 import { strict as assert } from 'assert'
 import { parentPort, workerData } from 'worker_threads'
-import { ConsumerData } from './types'
+import { logger } from '../utils/logger'
+import { arrayBufferToString } from './buffer-util'
+import { AnyArrayBuffer, ConsumerData } from './types'
+import { getWordId, produceWords } from './word-factory'
 
-const { id, interval, ITER }: ConsumerData = workerData
-// const log = logger(`consumer.${id}`)
-let count = 0
+const { id, interval, shareBuffer, nwords }: ConsumerData = workerData
+const log = logger(`consumer.${id}`)
 
-function requestWords() {
-  assert(parentPort != null, 'worker needs the parent port')
-}
+const _cache: Map<string, AnyArrayBuffer> = new Map()
 
 //
 // Consumers need to resolve items from the cache synchronously.
@@ -20,10 +20,41 @@ function requestWords() {
 // producer.
 //
 
+function resolveWord() {
+  assert(parentPort != null, 'worker needs the parent port')
+  const key = getWordId(nwords)
+  const cached = _cache.get(key)
+  if (cached != null) {
+    log.debug('cache hit')
+    return cached
+  }
+
+  log.debug('cache miss')
+  const payload = produceWords(shareBuffer, 1e4)
+  const tk = log.debugTime()
+  parentPort.postMessage(payload)
+  log.debugTimeEnd(tk, 'sent word of byteLen: %d', payload.value.byteLength)
+
+  return payload.value
+}
+
+function onCacheUpdate(cache: Map<AnyArrayBuffer, AnyArrayBuffer>) {
+  const tk = log.debugTime()
+  _cache.clear()
+  for (const [k, v] of cache) {
+    const key = arrayBufferToString(k)
+    _cache.set(key, v)
+  }
+  log.debugTimeEnd(tk, 'stored cache update')
+}
+
 function tick() {
-  requestWords()
-  if (++count >= ITER) process.exit(0)
+  resolveWord()
   setTimeout(tick, interval)
 }
 
-setTimeout(tick, interval)
+;(function init() {
+  setTimeout(tick, interval)
+  assert(parentPort != null, 'worker needs the parent port')
+  parentPort.on('message', onCacheUpdate).on('error', log.error)
+})()
