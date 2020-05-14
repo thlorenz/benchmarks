@@ -8,7 +8,6 @@ const log = logger('runner')
 class Runner {
   private readonly _spawnedProducers: Map<number, ProducerInfo> = new Map()
   private readonly _spawnedConsumers: Map<number, ConsumerInfo> = new Map()
-  private _cache?: Cache
 
   constructor(
     private readonly _nproducers: number,
@@ -28,7 +27,7 @@ class Runner {
       this._spawnConsumer(consumerInterval, i + 1)
     }
 
-    this._cache = new Cache(
+    new Cache(
       this._spawnedProducers,
       this._spawnedConsumers,
       this._cacheUpdateDelta

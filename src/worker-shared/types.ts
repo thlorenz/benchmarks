@@ -27,6 +27,6 @@ export type ConsumerInfo = { id: number; started: TimerKey; worker: Worker }
 
 export type AnyArrayBuffer = ArrayBuffer | SharedArrayBuffer
 export type ProducerPayload<T extends AnyArrayBuffer = SharedArrayBuffer> = {
-  key: T
+  key: string
   value: T
 }

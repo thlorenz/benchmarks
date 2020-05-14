@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("assert");
 const worker_threads_1 = require("worker_threads");
 const logger_1 = require("../utils/logger");
-const buffer_util_1 = require("./buffer-util");
 const word_factory_1 = require("./word-factory");
 const { id, interval, shareBuffer, nwords, nconcats } = worker_threads_1.workerData;
 const log = logger_1.logger(`consumer.${id}`);
@@ -35,8 +34,7 @@ function resolveWord() {
 function onCacheUpdate(cache) {
     const tk = log.debugTime();
     _cache.clear();
-    for (const [k, v] of cache) {
-        const key = buffer_util_1.arrayBufferToString(k);
+    for (const [key, v] of cache) {
         _cache.set(key, v);
     }
     log.debugTimeEnd(tk, 'stored cache update');

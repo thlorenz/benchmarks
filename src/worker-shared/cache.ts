@@ -11,7 +11,7 @@ export class Cache {
     private readonly _producers: Map<number, ProducerInfo> = new Map(),
     private readonly _consumers: Map<number, ConsumerInfo> = new Map(),
     private readonly _cacheUpdateDelta: number,
-    private readonly _cache: Map<AnyArrayBuffer, AnyArrayBuffer> = new Map()
+    private readonly _cache: Map<string, AnyArrayBuffer> = new Map()
   ) {
     this._lastCacheUpdate = Date.now()
 

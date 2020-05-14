@@ -21,7 +21,7 @@ exports.getWordId = getWordId;
 function produceWords(shareBuffer, nconcats, nwords, n) {
     const createBuffer = (size) => shareBuffer ? new SharedArrayBuffer(size) : new ArrayBuffer(size);
     const { idx, ws } = concatMultiWords(nconcats, nwords);
-    const key = buffer_util_1.stringToArrayBuffer(idx.toString(), createBuffer);
+    const key = idx.toString();
     const value = buffer_util_1.stringToArrayBuffer(ws, createBuffer);
     return {
         key,

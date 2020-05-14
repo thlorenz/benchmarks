@@ -23,7 +23,7 @@ class Runner {
         for (let i = 0; i < this._nconsumers; i++) {
             this._spawnConsumer(consumerInterval, i + 1);
         }
-        this._cache = new cache_1.Cache(this._spawnedProducers, this._spawnedConsumers, this._cacheUpdateDelta);
+        new cache_1.Cache(this._spawnedProducers, this._spawnedConsumers, this._cacheUpdateDelta);
     }
     _spawnConsumer(interval, id) {
         const workerData = {

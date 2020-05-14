@@ -1,7 +1,6 @@
 import { strict as assert } from 'assert'
 import { parentPort, workerData } from 'worker_threads'
 import { logger } from '../utils/logger'
-import { arrayBufferToString } from './buffer-util'
 import { AnyArrayBuffer, ConsumerData } from './types'
 import { getWordId, produceWords } from './word-factory'
 
@@ -38,11 +37,10 @@ function resolveWord() {
   return payload.value
 }
 
-function onCacheUpdate(cache: Map<AnyArrayBuffer, AnyArrayBuffer>) {
+function onCacheUpdate(cache: Map<string, AnyArrayBuffer>) {
   const tk = log.debugTime()
   _cache.clear()
-  for (const [k, v] of cache) {
-    const key = arrayBufferToString(k)
+  for (const [key, v] of cache) {
     _cache.set(key, v)
   }
   log.debugTimeEnd(tk, 'stored cache update')

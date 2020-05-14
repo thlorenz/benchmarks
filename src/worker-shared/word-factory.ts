@@ -29,7 +29,7 @@ export function produceWords(
     shareBuffer ? new SharedArrayBuffer(size) : new ArrayBuffer(size)
   const { idx, ws } = concatMultiWords(nconcats, nwords)
 
-  const key = stringToArrayBuffer(idx.toString(), createBuffer)
+  const key = idx.toString()
   const value = stringToArrayBuffer(ws, createBuffer)
   return {
     key,
