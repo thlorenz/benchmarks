@@ -10,7 +10,8 @@ SHARE_BUFFER=0 \
 PRODUCERS=4 \
 CONSUMERS=4 \
 WORDS=40 \
-CACHE_UPDATE_DELTA=100 \
+CONCATS=100 \
+CACHE_UPDATE_DELTA=10 \
   node $DIR/../dist/worker-shared/runner.js
 
 echo ""
@@ -21,5 +22,6 @@ SHARE_BUFFER=1 \
 PRODUCERS=4 \
 CONSUMERS=4 \
 WORDS=40 \
-CACHE_UPDATE_DELTA=100 \
+CONCATS=100 \
+CACHE_UPDATE_DELTA=10 \
   node $DIR/../dist/worker-shared/runner.js

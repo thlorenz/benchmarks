@@ -5,7 +5,7 @@ import { arrayBufferToString } from './buffer-util'
 import { AnyArrayBuffer, ConsumerData } from './types'
 import { getWordId, produceWords } from './word-factory'
 
-const { id, interval, shareBuffer, nwords }: ConsumerData = workerData
+const { id, interval, shareBuffer, nwords, nconcats }: ConsumerData = workerData
 const log = logger(`consumer.${id}`)
 
 const _cache: Map<string, AnyArrayBuffer> = new Map()
@@ -30,7 +30,7 @@ function resolveWord() {
   }
 
   log.debug('cache miss')
-  const payload = produceWords(shareBuffer, 1e4)
+  const payload = produceWords(shareBuffer, nwords, nconcats)
   const tk = log.debugTime()
   parentPort.postMessage(payload)
   log.debugTimeEnd(tk, 'sent word of byteLen: %d', payload.value.byteLength)

@@ -5,13 +5,14 @@ const logger_1 = require("../utils/logger");
 const cache_1 = require("./cache");
 const log = logger_1.logger('runner');
 class Runner {
-    constructor(_nproducers, _nconsumers, _producerITER, _shareBuffer, _cacheUpdateDelta, _nwords) {
+    constructor(_nproducers, _nconsumers, _producerITER, _shareBuffer, _cacheUpdateDelta, _nwords, _nconcats) {
         this._nproducers = _nproducers;
         this._nconsumers = _nconsumers;
         this._producerITER = _producerITER;
         this._shareBuffer = _shareBuffer;
         this._cacheUpdateDelta = _cacheUpdateDelta;
         this._nwords = _nwords;
+        this._nconcats = _nconcats;
         this._spawnedProducers = new Map();
         this._spawnedConsumers = new Map();
     }
@@ -30,6 +31,7 @@ class Runner {
             id,
             shareBuffer: this._shareBuffer,
             nwords: this._nwords,
+            nconcats: this._nconcats,
         };
         const workerOptions = { workerData };
         const consumer = new worker_threads_1.Worker(require.resolve('./consumer'), workerOptions);
@@ -48,6 +50,7 @@ class Runner {
             id,
             shareBuffer: this._shareBuffer,
             nwords: this._nwords,
+            nconcats: this._nconcats,
         };
         const workerOptions = { workerData };
         log.debug('spawning producer %d', id);
@@ -69,9 +72,10 @@ class Runner {
 const shareBuffer = parseInt(process.env.SHARE_BUFFER || '') === 1;
 const consumers = parseInt(process.env.CONSUMERS || '') || 1;
 const producers = parseInt(process.env.PRODUCERS || '') || 1;
-const nwords = parseInt(process.env.WORDS || '') || 1e2;
+const nwords = parseInt(process.env.WORDS || '') || 40;
+const nconcats = parseInt(process.env.CONCATS || '') || 1e2;
 const CACHE_UPDATE_DELTA = parseInt(process.env.CACHE_UPDATE_DELTA || '') || 1e3;
 log.info({ shareBuffer, consumers, producers, nwords, CACHE_UPDATE_DELTA });
-const runner = new Runner(producers, consumers, 10, shareBuffer, CACHE_UPDATE_DELTA, nwords);
+const runner = new Runner(producers, consumers, 10, shareBuffer, CACHE_UPDATE_DELTA, nwords, nconcats);
 runner.start(30, 20);
 //# sourceMappingURL=runner.js.map

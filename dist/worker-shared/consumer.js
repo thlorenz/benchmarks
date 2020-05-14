@@ -5,7 +5,7 @@ const worker_threads_1 = require("worker_threads");
 const logger_1 = require("../utils/logger");
 const buffer_util_1 = require("./buffer-util");
 const word_factory_1 = require("./word-factory");
-const { id, interval, shareBuffer, nwords } = worker_threads_1.workerData;
+const { id, interval, shareBuffer, nwords, nconcats } = worker_threads_1.workerData;
 const log = logger_1.logger(`consumer.${id}`);
 const _cache = new Map();
 //
@@ -26,7 +26,7 @@ function resolveWord() {
         return cached;
     }
     log.debug('cache miss');
-    const payload = word_factory_1.produceWords(shareBuffer, 1e4);
+    const payload = word_factory_1.produceWords(shareBuffer, nwords, nconcats);
     const tk = log.debugTime();
     worker_threads_1.parentPort.postMessage(payload);
     log.debugTimeEnd(tk, 'sent word of byteLen: %d', payload.value.byteLength);

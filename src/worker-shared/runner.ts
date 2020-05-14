@@ -16,7 +16,8 @@ class Runner {
     private readonly _producerITER: number,
     private readonly _shareBuffer: boolean,
     private readonly _cacheUpdateDelta: number,
-    private readonly _nwords: number
+    private readonly _nwords: number,
+    private readonly _nconcats: number
   ) {}
 
   start(producerInterval: number, consumerInterval: number) {
@@ -40,6 +41,7 @@ class Runner {
       id,
       shareBuffer: this._shareBuffer,
       nwords: this._nwords,
+      nconcats: this._nconcats,
     }
     const workerOptions: WorkerOptions = { workerData }
     const consumer = new Worker(require.resolve('./consumer'), workerOptions)
@@ -61,6 +63,7 @@ class Runner {
       id,
       shareBuffer: this._shareBuffer,
       nwords: this._nwords,
+      nconcats: this._nconcats,
     }
     const workerOptions: WorkerOptions = { workerData }
 
@@ -86,7 +89,8 @@ class Runner {
 const shareBuffer = parseInt(process.env.SHARE_BUFFER || '') === 1
 const consumers = parseInt(process.env.CONSUMERS || '') || 1
 const producers = parseInt(process.env.PRODUCERS || '') || 1
-const nwords = parseInt(process.env.WORDS || '') || 1e2
+const nwords = parseInt(process.env.WORDS || '') || 40
+const nconcats = parseInt(process.env.CONCATS || '') || 1e2
 
 const CACHE_UPDATE_DELTA = parseInt(process.env.CACHE_UPDATE_DELTA || '') || 1e3
 
@@ -98,6 +102,7 @@ const runner = new Runner(
   10,
   shareBuffer,
   CACHE_UPDATE_DELTA,
-  nwords
+  nwords,
+  nconcats
 )
 runner.start(30, 20)

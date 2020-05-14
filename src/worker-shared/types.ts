@@ -7,12 +7,14 @@ export type ProducerData = {
   ITER: number
   shareBuffer: boolean
   nwords: number
+  nconcats: number
 }
 export type ConsumerData = {
   id: number
   interval: number
   shareBuffer: boolean
   nwords: number
+  nconcats: number
 }
 
 export type ProducerInfo = {
