@@ -11,7 +11,7 @@ PRODUCERS=4 \
 CONSUMERS=4 \
 WORDS=40 \
 CACHE_UPDATE_DELTA=100 \
-  node $DIR/../dist/worker-shared/cache.js
+  node $DIR/../dist/worker-shared/runner.js
 
 echo ""
 echo "+++++++++++++++++++++++++"
@@ -22,4 +22,4 @@ PRODUCERS=4 \
 CONSUMERS=4 \
 WORDS=40 \
 CACHE_UPDATE_DELTA=100 \
-  node $DIR/../dist/worker-shared/cache.js
+  node $DIR/../dist/worker-shared/runner.js

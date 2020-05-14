@@ -1,3 +1,6 @@
+import { Worker } from 'worker_threads'
+import { TimerKey } from '../utils/time-stamper'
+
 export type ProducerData = {
   id: number
   interval: number
@@ -11,6 +14,14 @@ export type ConsumerData = {
   shareBuffer: boolean
   nwords: number
 }
+
+export type ProducerInfo = {
+  id: number
+  started: TimerKey
+  ITER: number
+  worker: Worker
+}
+export type ConsumerInfo = { id: number; started: TimerKey; worker: Worker }
 
 export type AnyArrayBuffer = ArrayBuffer | SharedArrayBuffer
 export type ProducerPayload<T extends AnyArrayBuffer = SharedArrayBuffer> = {
