@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "debug": "^4.1.1",
+    "debug": "^4.3.1",
     "supports-color": "^7.1.0",
     "tslib": "^1.11.2",
     "uuid": "^8.0.0",
